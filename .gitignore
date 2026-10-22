@@ -1,2 +1,3 @@
-EasyTransfer*/{bin,obj}
+EasyTransfer*/bin
+EasyTransfer*/obj
 build
