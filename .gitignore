@@ -1,2 +1,2 @@
-experiment
-bin
+EasyTransfer*/{bin,obj}
+build
