@@ -19,7 +19,7 @@ Run ```./package.sh``` to build and produce the binary executables, then it stor
 
 Note: For now, I use this to build the app for linux, perhaps it will change in the future.
 
-### Run EasyTransfer
+## Run EasyTransfer
 After building processes are done, then you need to ```cd``` into ```./build``` directory, where the executables stored. After that, run ```./EasyTransfer``` (for linux).
 
 ## Features
