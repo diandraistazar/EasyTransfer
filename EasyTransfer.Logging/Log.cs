@@ -1,5 +1,8 @@
 namespace EasyTransfer.Logging;
 
+using System;
+using System.Text;
+
 public enum LogLevel {
     Print,
     Debug,
@@ -12,9 +15,14 @@ public enum LogLevel {
 public class Log {
     public static void Print(string message, char end = '\n', ConsoleColor foregroundColor = ConsoleColor.White) { 
         ConsoleColor previous = Console.ForegroundColor;
+        StringBuilder entry = new();
+        
         Console.ForegroundColor = foregroundColor;
         
-        Console.Write(message + end);
+        entry.Append(message);
+        entry.Append(end);
+        Console.Write(entry);
+
         Console.ForegroundColor = previous;
     }
     public static void Debug(string message, char end = '\n') { 
@@ -38,33 +46,39 @@ public class Log {
     }
 
     private static void Write(LogLevel level, string message, char end) {
-        ConsoleColor foregroundColorBak = Console.ForegroundColor;
-        string logString = "";
+        ConsoleColor previous = Console.ForegroundColor;
+        StringBuilder entry = new(" ");
 
         switch(level) {
             case LogLevel.Debug:
-                logString = "DEBUG";
+                entry.Append("DEBUG");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 break;
-            case LogLevel.Success:
-                logString = "DONE";
-                Console.ForegroundColor = ConsoleColor.Green;
-                break;
             case LogLevel.Info:
-                logString = "INFO";
+                entry.Append(" INFO");
                 Console.ForegroundColor = ConsoleColor.White;
                 break;
+            case LogLevel.Success:
+                entry.Append(" DONE");
+                Console.ForegroundColor = ConsoleColor.Green;
+                break;
             case LogLevel.Warning:
-                logString = "WARN";
+                entry.Append(" WARN");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 break;
             case LogLevel.Error:
-                logString = "ERROR";
+                entry.Append("ERROR");
                 Console.ForegroundColor = ConsoleColor.Red;
                 break;
         }
+        Console.Write(entry);
+        
+        entry.Clear();
+        entry.Append(": ");
+        entry.Append(message);
+        entry.Append(end);
 
-        Console.Write($" {logString, 5}: {message}{end}");
-        Console.ForegroundColor = foregroundColorBak;
+        Console.ForegroundColor = previous;
+        Console.Write(entry);
     }
 }

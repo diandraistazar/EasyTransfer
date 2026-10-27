@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\EasyTransfer\EasyTransfer.csproj" />
     <ProjectReference Include="..\EasyTransfer.Logging\EasyTransfer.Logging.csproj" />
-    <ProjectReference Include="..\EasyTransfer.Core\EasyTransfer.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
 </Project>
