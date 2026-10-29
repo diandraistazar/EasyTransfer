@@ -21,7 +21,7 @@ print_help() {
     echo "--help|-h             Print the help message"
     echo "build|publish         Specify the mode"
     echo "...                   It means you can pass any arguments that dotnet build/publish supports such as"
-    echo "                      -p:StartupObject=EasyTransfer.Console, --self-contained, --runtime=*, etc"
+    echo "                      -p:StartupObject=EasyTransfer.Console, --self-contained, --runtime, etc"
 }
 
 if [ $# -lt 1 ]; then
@@ -83,7 +83,7 @@ if [ "$DOTNET_MODE" == build ]; then
     dotnet build "$DOTNET_SLN" --framework "$DOTNET_FRAMEWORK_VER" ${DOTNET_OPTIONS[@]}
 elif [ "$DOTNET_MODE" == publish ]; then
     echo Default Opts: ${DOTNET_OPTIONS[@]}
-    
+
     dotnet publish "$DOTNET_SLN" --framework "$DOTNET_FRAMEWORK_VER" ${DOTNET_OPTIONS[@]}
 else
     echo "ERROR: The specified mode can be either build or publish"

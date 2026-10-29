@@ -11,26 +11,32 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.CommandLine;
 
-class Program {
-    public static string command;
-    public static IPAddress ipAddress;
+class Program
+{
+    public static string? command;
+    public static IPAddress? ipAddress;
     public static int port;
-    public static List<FileInfo> fileList = new ();
-    public static DirectoryInfo dirPath;
+    public static List<FileInfo> fileList = new();
+    public static DirectoryInfo? dirPath;
 
-    public static void Main(string[] argv) {
+    public static void Main(string[] argv)
+    {
         Argument.Parse(argv);
 
         Log.Info("CLI session running");
 
-        if(command == "send") {
+        if (command == "send")
+        {
             SendCommand();
-        } else if(command == "recv") {
+        }
+        else if (command == "recv")
+        {
             RecvCommand();
         }
     }
 
-    public static void SendCommand() {
+    public static void SendCommand()
+    {
         TcpListener? server = Network.SetupServer(ipAddress, port);
 
         Log.Info("Server listening ... ", '\0');
@@ -43,13 +49,15 @@ class Program {
         byte[]? statusBytes;
         int bytes;
 
-        for(int i = 0; i < fileList.Count; i++) {
+        for (int i = 0; i < fileList.Count; i++)
+        {
             file = fileList[i];
-            FileHeader header = new () {
+            FileHeader header = new()
+            {
                 Index = i,
                 Filename = file.Name,
                 Length = file.Length,
-                Next = i == fileList.Count-1 ? false : true
+                Next = i == fileList.Count - 1 ? false : true
             };
 
             byte[] headerBytes = FileHeader.Serialize(header);
@@ -57,7 +65,8 @@ class Program {
 
             bytes = Network.ReceiveData(client, 128, out statusBytes);
             status = Status.Deserialize(statusBytes.Take(bytes).ToArray());
-            if(status?.Message != Status.iGot) {
+            if (status?.Message != Status.iGot)
+            {
                 i--;
                 continue;
             }
@@ -66,20 +75,22 @@ class Program {
 
             bytes = Network.ReceiveData(client, 128, out statusBytes);
             status = Status.Deserialize(statusBytes.Take(bytes).ToArray());
-            if(status?.Message != Status.iGot) {
+            if (status?.Message != Status.iGot)
+            {
                 i--;
                 continue;
             }
 
             Log.Succ($"Successfully sending \"{file.Name}\"");
         }
-            
+
         server.Stop();
         client.Client.Shutdown(SocketShutdown.Both);
         client.Close();
     }
 
-    public static void RecvCommand() {
+    public static void RecvCommand()
+    {
         TcpClient client = Network.SetupClient(ipAddress, port);
 
         Log.Info($"Connected to {client.Client.RemoteEndPoint}");
@@ -90,27 +101,35 @@ class Program {
         byte[]? buffer;
         bool looping = true;
 
-        while(looping) {
+        while (looping)
+        {
             Network.ReceiveData(client, 128, out buffer);
-            try {
+            try
+            {
                 header = FileHeader.Deserialize(buffer);
-            } catch {
+            }
+            catch
+            {
                 Network.SendData(client, resendStatus);
                 continue;
             }
-                
-            if(header?.Next == false) { // using !(bool)header?.Next also works but not as readable as this
-                                        // Basically, header?.Next returns bool? not bool, this is because of ? keyword.
-                                        // bool means either true or false, however bool? means either true, false, or null
-                                        // So that's we need to cast from bool? to bool using (bool) cast.
+
+            if (header?.Next == false)
+            { // using !(bool)header?.Next also works but not as readable as this
+              // Basically, header?.Next returns bool? not bool, this is because of ? keyword.
+              // bool means either true or false, however bool? means either true, false, or null
+              // So that's we need to cast from bool? to bool using (bool) cast.
                 looping = false;
             }
 
             Network.SendData(client, iGotBytes);
-                
-            try {
+
+            try
+            {
                 Network.ReceiveFile(client, (int)header?.Length, Path.Combine(dirPath.FullName, header?.Filename));
-            } catch {
+            }
+            catch
+            {
                 Network.SendData(client, resendStatus);
                 continue;
             }
@@ -124,7 +143,7 @@ class Program {
     }
 }
 
-internal class Argument { 
+internal class Argument {
     // Positional Arguments
     private static readonly Argument<string> commandArg = new("send|recv") { Description = "Specify the action that this program will take" };
     private static readonly Argument<string> addressArg = new("address") { Description = "Specify either this machine address (if send command selected) or the server address (if recv command selected)" };
@@ -156,7 +175,7 @@ internal class Argument {
         if(Program.command == "send") {
             foreach(string fileString in argv.GetValue(filesOrDirArg)) {
                 FileInfo file = new (fileString);
-                
+
                 if(file.Exists) {
                     Program.fileList.Add(file);
                 } else {
@@ -171,7 +190,7 @@ internal class Argument {
                 Environment.Exit(1);
             }
         }
-    } 
+    }
 
     private static bool ParseIPAndPort(string address) {
         if(!address.Contains(':')) {
@@ -188,7 +207,7 @@ internal class Argument {
 
         if(!IPAddress.TryParse(ip, out Program.ipAddress) || !int.TryParse(port, out Program.port)) {
             return false;
-        } 
+        }
 
         return true;
     }
