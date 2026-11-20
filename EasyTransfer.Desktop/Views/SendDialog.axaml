@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:vm="using:EasyTransfer.Desktop.ViewModels"
+            xmlns:views="using:EasyTransfer.Desktop.Views"
+            x:Class="EasyTransfer.Desktop.Views.SendDialog"
+            x:DataType="vm:MainViewModel"
+            x:Name="root"
+            Width="600" Height="300">
+
+    <Grid RowDefinitions="Auto, *" Background="Red">
+        <Button Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                CornerRadius="0" Command="{Binding CloseSendRecvDialogCommand}">
+            <Image Source="/Assets/Exit.png" Width="16" Height="16" />
+        </Button>
+        <TextBlock Grid.Row="0" Text="Send" Margin="4" />
+        <Grid Grid.Row="1" RowDefinitions="Auto, *, Auto" Margin="8 0">
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto">
+                <TextBox Grid.Column="0" Name="AddressInput" Grid.Row="1"
+                        PlaceholderText="This machine IP Address" AcceptsReturn="False"
+                        AcceptsTab="False" MaxLength="15" Text="{Binding Address, Mode=TwoWay}" />
+                <TextBox Grid.Column="1" Name="PortInput"
+                        PlaceholderText="The server port" AcceptsReturn="False" 
+                        AcceptsTab="False" MaxLength="5" Text="{Binding Port, Mode=TwoWay}" />
+                <Button Grid.Column="2" Command="{Binding PickFilesCommand}" CommandParameter="{Binding $self}" Margin="8 0 0 0">
+                    <Image Source="/Assets/Explorer.png" Width="24" Height="24" />
+                </Button>
+            </Grid>
+            <ListBox Grid.Row="1" Background="Transparent" SelectionMode="Single" ItemsSource="{Binding FileListDialog, Mode=OneWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name, Mode=OneWay}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Grid.Row="2" Content="Send" Margin="4"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Command="{Binding StartSendingCommand}" CommandParameter="{Binding $self}" />
+        </Grid>
+    </Grid>
+</UserControl>

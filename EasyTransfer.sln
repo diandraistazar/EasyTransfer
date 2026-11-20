@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.Console", "EasyTransfer.Console\EasyTransfer.Console.csproj", "{7E816081-0F16-46DE-A953-9C8583C87C37}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.CLI", "EasyTransfer.CLI\EasyTransfer.CLI.csproj", "{7E816081-0F16-46DE-A953-9C8583C87C37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer", "EasyTransfer\EasyTransfer.csproj", "{FBC1C5C5-FED3-4703-A445-C0A2EEE6C684}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.Core", "EasyTransfer.Core\EasyTransfer.Core.csproj", "{FBC1C5C5-FED3-4703-A445-C0A2EEE6C684}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.Logging", "EasyTransfer.Logging\EasyTransfer.Logging.csproj", "{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.GUI", "EasyTransfer.GUI\EasyTransfer.GUI.csproj", "{26DB2522-0EDC-446E-8675-70951980A5E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTransfer.Desktop", "EasyTransfer.Desktop\EasyTransfer.Desktop.csproj", "{26DB2522-0EDC-446E-8675-70951980A5E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,18 +43,6 @@ Global
 		{FBC1C5C5-FED3-4703-A445-C0A2EEE6C684}.Release|x64.Build.0 = Release|Any CPU
 		{FBC1C5C5-FED3-4703-A445-C0A2EEE6C684}.Release|x86.ActiveCfg = Release|Any CPU
 		{FBC1C5C5-FED3-4703-A445-C0A2EEE6C684}.Release|x86.Build.0 = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|x64.Build.0 = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Debug|x86.Build.0 = Debug|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|x64.ActiveCfg = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|x64.Build.0 = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|x86.ActiveCfg = Release|Any CPU
-		{10F8FD6A-8A75-453A-A05D-211ED02DDF6D}.Release|x86.Build.0 = Release|Any CPU
 		{26DB2522-0EDC-446E-8675-70951980A5E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26DB2522-0EDC-446E-8675-70951980A5E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26DB2522-0EDC-446E-8675-70951980A5E6}.Debug|x64.ActiveCfg = Debug|Any CPU
