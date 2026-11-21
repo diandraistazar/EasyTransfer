@@ -8,13 +8,13 @@ using EasyTransfer.Core.Logging;
 
 namespace EasyTransfer.Core.Services;
 
-internal sealed class ServerNetwork : TransferModelBase
+internal sealed class ServerNetworkService : TransferModelBase
 {
-    private Transmission Transmission { get; init; }
+    private TransmissionService Transmission { get; init; }
 
-    public ServerNetwork()
+    public ServerNetworkService()
     {   
-        Transmission = new Transmission();
+        Transmission = new TransmissionService();
     }
 
     public bool Setup(out TcpListener? server)

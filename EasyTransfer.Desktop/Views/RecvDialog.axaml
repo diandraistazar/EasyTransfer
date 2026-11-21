@@ -23,7 +23,7 @@
                 <TextBox Grid.Column="1" Name="PortInput"
                         PlaceholderText="The server port" AcceptsReturn="False" 
                         AcceptsTab="False" MaxLength="5" Text="{Binding Port, Mode=TwoWay}" />
-                <Button Grid.Column="2" Command="{Binding PickDestDirectoryCommand}" CommandParameter="{Binding $self}" Margin="8 0 0 0">
+                <Button Grid.Column="2" Command="{Binding PickDirectoryDialog}" Margin="8 0 0 0">
                     <Image Source="/Assets/Explorer.png" Width="24" Height="24" />
                 </Button>
             </Grid>

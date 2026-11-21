@@ -22,13 +22,14 @@ public partial class MainViewModel : ObservableObject
     private int _progress = 0;
     private DirectoryData? _destDirectory = default;
 
-    private TransferManager Manager { get; init; }
+    private TransferManagerService Manager { get; init; }
+    private FilePickerService FilePicker { get; init; }
 
-    public MainViewModel()
+    public MainViewModel(IStorageProvider storageProvider)
     {
-        Manager = new();
+        Manager = new TransferManagerService();
+        FilePicker = new FilePickerService(storageProvider);
 
-        DestDirectory = new DirectoryData(string.Empty, string.Empty, string.Empty);
         FileListDialog = new ObservableCollection<FileData>();
         HistoryTransfer = new ObservableCollection<string>();
 
@@ -40,7 +41,11 @@ public partial class MainViewModel : ObservableObject
     public DirectoryData? DestDirectory
     {
         get => _destDirectory;
-        set => SetProperty(ref _destDirectory, value);
+        set
+        {
+            SetProperty(ref _destDirectory, value);
+            StartReceivingCommand.NotifyCanExecuteChanged();
+        }
     }
     
     public bool IsSendRecvDialogOpen => Dialog != 0;
@@ -94,10 +99,10 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CloseSendRecvDialog()
     {
-        Address = string.Empty;
-        Port = 0;
         FileListDialog.Clear();
         DestDirectory = default;
+        Address = string.Empty;
+        Port = 0;
         Dialog = 0;
     }
 
@@ -130,66 +135,17 @@ public partial class MainViewModel : ObservableObject
     // -------------------------------------------- Picking files relay commands
     
     [RelayCommand]
-    public async Task PickFiles(object? e)
+    public async Task PickFilesDialog()
     {
-        if(e is Visual visual)
-        {
-            TopLevel? topLevel = TopLevel.GetTopLevel(visual);
+        FileData[] fileList = await FilePicker.PickFilesAsync() ?? new FileData[0];
 
-            if(topLevel == null)
-                return;
-
-            if(!topLevel.StorageProvider.CanOpen)
-            {
-                Log.Warn("Cannot open a file manager for picking files");
-                return;
-            }
-
-            var itemList = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
-            {
-                Title = "Pick Files",
-                AllowMultiple = true
-            });
-
-            foreach(var x in itemList)
-                FileListDialog.Add(new FileData(
-                    x.Name, x.Path.LocalPath,
-                    new Uri(x.Path, ".").LocalPath,
-                    new FileInfo(x.Path.LocalPath).Length
-                ));
-        }
+        foreach(var x in fileList)
+            FileListDialog.Add(x);
     }
 
     [RelayCommand]
-    public async Task PickDestDirectory(object? e)
+    public async Task PickDirectoryDialog()
     {
-        if(e is Visual visual)
-        {
-            TopLevel? topLevel = TopLevel.GetTopLevel(visual);
-
-            if(topLevel == null)
-                return;
-
-            if(!topLevel.StorageProvider.CanPickFolder)
-            {
-                Log.Warn("Cannot open a file manager for picking a directory");
-                return;
-            }
-
-            var directory = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
-            {
-                Title = "Pick a Directory",
-                AllowMultiple = false
-            });
-
-            if(directory.Count > 0)
-            {
-                var dir = directory[0];
-
-                DestDirectory = new(dir.Name, dir.Path.LocalPath, new Uri(dir.Path, "..").LocalPath);
-            }
-            else
-                Log.Warn("Directory have not been selected yet");
-        }
+        DestDirectory = await FilePicker.PickDirectoryAsync() ?? default;
     }
 }

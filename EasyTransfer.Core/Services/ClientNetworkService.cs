@@ -8,13 +8,13 @@ using System.Text;
 
 namespace EasyTransfer.Core.Services;
 
-internal sealed class ClientNetwork : TransferModelBase
+internal sealed class ClientNetworkService : TransferModelBase
 { 
-    private Transmission Transmission { get; init; }
+    private TransmissionService Transmission { get; init; }
 
-    public ClientNetwork()
+    public ClientNetworkService()
     {   
-        Transmission = new Transmission();
+        Transmission = new TransmissionService();
     }
 
     public bool Setup(out TcpClient? client)
@@ -46,7 +46,7 @@ internal sealed class ClientNetwork : TransferModelBase
 
         if(!Transmission.ReceiveData(stream, 4096, out byte[]? bytes, out long size))
         {
-            Log.Error($"Recv the InitialInfo bytes from the server: FAILED");
+            Log.Error($"Received the InitialInfo bytes from the server: FAILED");
             return false;
         }
 

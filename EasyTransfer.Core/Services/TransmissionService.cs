@@ -2,11 +2,10 @@ using System.Net.Sockets;
 
 using EasyTransfer.Core.Models.Filesystem;
 using EasyTransfer.Core.Logging;
-using System.Security.Cryptography.X509Certificates;
 
 namespace EasyTransfer.Core.Services;
 
-internal sealed class Transmission
+internal sealed class TransmissionService
 {
     public bool SendData(NetworkStream stream, byte[] bytes)
     {
@@ -137,7 +136,7 @@ internal sealed class Transmission
             if(rvalue)
                 recvBytesAdd(size);
             else
-                throw new Exception("ReceiveData throwed exception i guess");
+                throw new Exception("ReceiveData throwed an exception i guess");
             
             File.AppendAllBytes(fileData.FullPath, buffer);
             written += size;

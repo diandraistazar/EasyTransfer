@@ -5,15 +5,15 @@ using EasyTransfer.Core.Logging;
 
 namespace EasyTransfer.Core.Services;
 
-public sealed class TransferManager : TransferModelBase
+public sealed class TransferManagerService : TransferModelBase
 {
-    private ServerNetwork Server { get; init; }
-    private ClientNetwork Client { get; init; }
+    private ServerNetworkService Server { get; init; }
+    private ClientNetworkService Client { get; init; }
 
-    public TransferManager()
+    public TransferManagerService()
     {
-        Server = new ServerNetwork();
-        Client = new ClientNetwork();
+        Server = new ServerNetworkService();
+        Client = new ClientNetworkService();
     }
 
     public bool Send(TransferContext context)
