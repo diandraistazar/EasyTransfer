@@ -2,9 +2,342 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="EasyTransfer.Desktop.App"
              xmlns:local="using:EasyTransfer.Desktop"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <!-- ============================== Palette ============================== -->
+        <Color x:Key="AccentSend">#7C83FF</Color>
+        <Color x:Key="AccentRecv">#2DD4A7</Color>
+
+        <SolidColorBrush x:Key="BgBrush" Color="#0A0D14" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#121622" />
+        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#171C2B" />
+        <SolidColorBrush x:Key="FieldBrush" Color="#0D1019" />
+        <SolidColorBrush x:Key="BorderSubtleBrush" Color="#252B3D" />
+        <SolidColorBrush x:Key="BorderHoverBrush" Color="#3A4260" />
+        <SolidColorBrush x:Key="TextBrush" Color="#F2F4FA" />
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#8A93AD" />
+        <SolidColorBrush x:Key="TextFaintBrush" Color="#5B647E" />
+        <SolidColorBrush x:Key="ScrimBrush" Color="#B304060B" />
+        <SolidColorBrush x:Key="SendAccentBrush" Color="#7C83FF" />
+        <SolidColorBrush x:Key="RecvAccentBrush" Color="#2DD4A7" />
+
+        <LinearGradientBrush x:Key="SendGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Color="#6366F1" Offset="0" />
+            <GradientStop Color="#9B5CF6" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="RecvGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+            <GradientStop Color="#10B981" Offset="0" />
+            <GradientStop Color="#06B6D4" Offset="1" />
+        </LinearGradientBrush>
+
+        <!-- Card faces: base surface with a soft accent glow in the top-right corner -->
+        <RadialGradientBrush x:Key="SendCardBrush" Center="100%,0%" GradientOrigin="100%,0%" RadiusX="110%" RadiusY="140%">
+            <GradientStop Color="#3A4170FF" Offset="0" />
+            <GradientStop Color="#141829" Offset="1" />
+        </RadialGradientBrush>
+        <RadialGradientBrush x:Key="RecvCardBrush" Center="100%,0%" GradientOrigin="100%,0%" RadiusX="110%" RadiusY="140%">
+            <GradientStop Color="#3A10B98F" Offset="0" />
+            <GradientStop Color="#101C22" Offset="1" />
+        </RadialGradientBrush>
+
+        <BoxShadows x:Key="DialogShadow">0 28 80 0 #CC000000</BoxShadows>
+
+        <!-- ============================== Icons (24x24 stroke paths) ============================== -->
+        <StreamGeometry x:Key="IconSend">M12 16V4M7 9l5-5 5 5M4 20h16</StreamGeometry>
+        <StreamGeometry x:Key="IconRecv">M12 4v12M7 11l5 5 5-5M4 20h16</StreamGeometry>
+        <StreamGeometry x:Key="IconClose">M6 6l12 12M18 6L6 18</StreamGeometry>
+        <StreamGeometry x:Key="IconFolder">M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z</StreamGeometry>
+        <StreamGeometry x:Key="IconFile">M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5</StreamGeometry>
+        <StreamGeometry x:Key="IconPlus">M12 5v14M5 12h14</StreamGeometry>
+        <StreamGeometry x:Key="IconClock">M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z</StreamGeometry>
+        <StreamGeometry x:Key="IconArrowUpRight">M7 17L17 7M8 7h9v9</StreamGeometry>
+        <StreamGeometry x:Key="IconSwap">M7 7h11M14 3l4 4-4 4M17 17H6M10 13l-4 4 4 4</StreamGeometry>
+        <StreamGeometry x:Key="IconTray">M4 13l2-8h12l2 8v6H4zM4 13h5l1 2h4l1-2h5</StreamGeometry>
+        <StreamGeometry x:Key="IconCheck">M5 12l5 5L20 7</StreamGeometry>
+    </Application.Resources>
 
     <Application.Styles>
         <FluentTheme />
+
+        <!-- ============================== Typography ============================== -->
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.heading">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.section">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.sub">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="Margin" Value="2,0,0,6" />
+        </Style>
+        <Style Selector="TextBlock.faint">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFaintBrush}" />
+        </Style>
+
+        <!-- ============================== Icons ============================== -->
+        <Style Selector="Path.icon">
+            <Setter Property="Stroke" Value="{DynamicResource TextBrush}" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="StrokeLineCap" Value="Round" />
+            <Setter Property="StrokeJoin" Value="Round" />
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Stretch" Value="None" />
+        </Style>
+        <Style Selector="Path.icon.muted">
+            <Setter Property="Stroke" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="Path.icon.faint">
+            <Setter Property="Stroke" Value="{DynamicResource TextFaintBrush}" />
+        </Style>
+        <Style Selector="Path.icon.send">
+            <Setter Property="Stroke" Value="{DynamicResource SendAccentBrush}" />
+        </Style>
+        <Style Selector="Path.icon.recv">
+            <Setter Property="Stroke" Value="{DynamicResource RecvAccentBrush}" />
+        </Style>
+
+        <!-- ============================== Panels ============================== -->
+        <Style Selector="Border.panel">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <Style Selector="Border.badge">
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="CornerRadius" Value="12" />
+        </Style>
+        <Style Selector="Border.badge.send">
+            <Setter Property="Background" Value="{DynamicResource SendGradient}" />
+        </Style>
+        <Style Selector="Border.badge.recv">
+            <Setter Property="Background" Value="{DynamicResource RecvGradient}" />
+        </Style>
+
+        <!-- ============================== Buttons ==============================
+             One custom template shared by every button; state changes are done on
+             the template's "Face" border so they work for any background. -->
+        <Style Selector="Button.btn">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Padding" Value="16,0" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="RenderTransform" Value="none" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" />
+                </Transitions>
+            </Setter>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Name="Face"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.12" />
+                                <BrushTransition Property="Background" Duration="0:0:0.12" />
+                                <BrushTransition Property="BorderBrush" Duration="0:0:0.12" />
+                            </Transitions>
+                        </Border.Transitions>
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Padding="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <!-- primary (filled gradient) -->
+        <Style Selector="Button.btn.primary">
+            <Setter Property="Background" Value="{DynamicResource SendGradient}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="Padding" Value="22,0" />
+        </Style>
+        <Style Selector="Button.btn.primary.recv">
+            <Setter Property="Background" Value="{DynamicResource RecvGradient}" />
+            <Setter Property="Foreground" Value="#04130F" />
+        </Style>
+        <Style Selector="Button.btn.primary:pointerover /template/ Border#Face">
+            <Setter Property="Opacity" Value="0.9" />
+        </Style>
+        <Style Selector="Button.btn.primary:pressed /template/ Border#Face">
+            <Setter Property="Opacity" Value="0.75" />
+        </Style>
+        <Style Selector="Button.btn.primary:disabled /template/ Border#Face">
+            <Setter Property="Opacity" Value="0.35" />
+        </Style>
+
+        <!-- secondary (outlined) -->
+        <Style Selector="Button.btn.secondary">
+            <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Button.btn.secondary:pointerover /template/ Border#Face">
+            <Setter Property="Background" Value="#1F2538" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderHoverBrush}" />
+        </Style>
+        <Style Selector="Button.btn.secondary:pressed /template/ Border#Face">
+            <Setter Property="Background" Value="#141929" />
+        </Style>
+        <Style Selector="Button.btn.secondary:disabled /template/ Border#Face">
+            <Setter Property="Opacity" Value="0.4" />
+        </Style>
+
+        <!-- ghost / icon-only -->
+        <Style Selector="Button.btn.ghost">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="Button.btn.ghost:pointerover /template/ Border#Face">
+            <Setter Property="Background" Value="#1AFFFFFF" />
+        </Style>
+        <Style Selector="Button.btn.ghost:pressed /template/ Border#Face">
+            <Setter Property="Background" Value="#2AFFFFFF" />
+        </Style>
+
+        <!-- big action cards on the main screen -->
+        <Style Selector="Button.btn.card">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+        <Style Selector="Button.btn.card:pointerover">
+            <Setter Property="RenderTransform" Value="translateY(-3px)" />
+        </Style>
+        <Style Selector="Button.btn.card:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.985)" />
+        </Style>
+        <Style Selector="Border.cardface">
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="24" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.18" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.cardface.send">
+            <Setter Property="Background" Value="{DynamicResource SendCardBrush}" />
+            <Setter Property="BorderBrush" Value="#2B3258" />
+        </Style>
+        <Style Selector="Border.cardface.recv">
+            <Setter Property="Background" Value="{DynamicResource RecvCardBrush}" />
+            <Setter Property="BorderBrush" Value="#1F3B3B" />
+        </Style>
+        <Style Selector="Button.btn.card:pointerover Border.cardface.send">
+            <Setter Property="BorderBrush" Value="{DynamicResource SendAccentBrush}" />
+        </Style>
+        <Style Selector="Button.btn.card:pointerover Border.cardface.recv">
+            <Setter Property="BorderBrush" Value="{DynamicResource RecvAccentBrush}" />
+        </Style>
+
+        <!-- ============================== Text fields ============================== -->
+        <Style Selector="TextBox.field">
+            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Menlo, monospace" />
+        </Style>
+        <Style Selector="TextBox.field:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderHoverBrush}" />
+        </Style>
+        <Style Selector="TextBox.field:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SendAccentBrush}" />
+        </Style>
+        <Style Selector="TextBox.field.recv:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="{DynamicResource RecvAccentBrush}" />
+        </Style>
+
+        <!-- ============================== Lists ============================== -->
+        <Style Selector="ListBox.list">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="6" />
+        </Style>
+        <Style Selector="ListBox.list > ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBox.list > ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#0FFFFFFF" />
+        </Style>
+        <Style Selector="ListBox.list > ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#18FFFFFF" />
+        </Style>
+        <Style Selector="ListBox.list > ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#1FFFFFFF" />
+        </Style>
+        <Style Selector="ListBox.list > ListBoxItem /template/ Rectangle#SelectionIndicator">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <!-- ============================== Progress bar ============================== -->
+        <Style Selector="ProgressBar.xfer">
+            <Setter Property="Height" Value="8" />
+            <Setter Property="MinHeight" Value="8" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Background" Value="#1B2030" />
+            <Setter Property="Foreground" Value="{DynamicResource SendGradient}" />
+        </Style>
+        <Style Selector="ProgressBar.xfer.recv">
+            <Setter Property="Foreground" Value="{DynamicResource RecvGradient}" />
+        </Style>
+        <Style Selector="ProgressBar.xfer /template/ Border#PART_Indicator">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
     </Application.Styles>
 </Application>

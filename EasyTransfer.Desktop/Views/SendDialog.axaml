@@ -7,36 +7,124 @@
             x:Class="EasyTransfer.Desktop.Views.SendDialog"
             x:DataType="vm:MainViewModel"
             x:Name="root"
-            Width="600" Height="300">
+            Width="580"
+            HorizontalAlignment="Center" VerticalAlignment="Center">
 
-    <Grid RowDefinitions="Auto, *" Background="Red">
-        <Button Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right"
-                CornerRadius="0" Command="{Binding CloseSendRecvDialogCommand}">
-            <Image Source="/Assets/Exit.png" Width="16" Height="16" />
-        </Button>
-        <TextBlock Grid.Row="0" Text="Send" Margin="4" />
-        <Grid Grid.Row="1" RowDefinitions="Auto, *, Auto" Margin="8 0">
-            <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto">
-                <TextBox Grid.Column="0" Name="AddressInput" Grid.Row="1"
-                        PlaceholderText="This machine IP Address" AcceptsReturn="False"
-                        AcceptsTab="False" MaxLength="15" Text="{Binding Address, Mode=TwoWay}" />
-                <TextBox Grid.Column="1" Name="PortInput"
-                        PlaceholderText="The server port" AcceptsReturn="False" 
-                        AcceptsTab="False" MaxLength="5" Text="{Binding Port, Mode=TwoWay}" />
-                <Button Grid.Column="2" Command="{Binding PickFilesDialog}" Margin="8 0 0 0">
-                    <Image Source="/Assets/Explorer.png" Width="24" Height="24" />
+    <Border Classes="panel" CornerRadius="24" Background="{DynamicResource SurfaceBrush}"
+            BoxShadow="{DynamicResource DialogShadow}">
+        <Grid RowDefinitions="Auto, *, Auto">
+
+            <!-- Header -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Margin="24,22,16,6">
+                <Border Grid.Column="0" Classes="badge send">
+                    <Viewbox Width="20" Height="20">
+                        <Path Classes="icon" Data="{StaticResource IconSend}" Stroke="White" />
+                    </Viewbox>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center" Spacing="1">
+                    <TextBlock Classes="heading" Text="Send files" />
+                    <TextBlock Classes="sub" Text="Share files with another device on your network" />
+                </StackPanel>
+                <Button Grid.Column="2" Classes="btn ghost" VerticalAlignment="Top"
+                        Command="{Binding CloseSendRecvDialogCommand}">
+                    <Viewbox Width="18" Height="18">
+                        <Path Classes="icon muted" Data="{StaticResource IconClose}" />
+                    </Viewbox>
                 </Button>
             </Grid>
-            <ListBox Grid.Row="1" Background="Transparent" SelectionMode="Single" ItemsSource="{Binding FileListDialog, Mode=OneWay}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name, Mode=OneWay}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <Button Grid.Row="2" Content="Send" Margin="4"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Command="{Binding StartSendingCommand}" CommandParameter="{Binding $self}" />
+
+            <!-- Body -->
+            <StackPanel Grid.Row="1" Margin="24,16,24,8" Spacing="20">
+                <Grid ColumnDefinitions="*, 12, 120">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Classes="label" Text="Address" />
+                        <TextBox Classes="field" Name="AddressInput"
+                                 PlaceholderText="This machine IP Address" AcceptsReturn="False"
+                                 AcceptsTab="False" MaxLength="15" Text="{Binding Address, Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Classes="label" Text="Port" />
+                        <TextBox Classes="field" Name="PortInput"
+                                 PlaceholderText="The server port" AcceptsReturn="False"
+                                 AcceptsTab="False" MaxLength="5" Text="{Binding Port, Mode=TwoWay}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="0">
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
+                        <TextBlock Grid.Column="0" Classes="label" Text="Files" Margin="2,0,0,0" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" Classes="btn secondary" MinHeight="36" Padding="14,0"
+                                Command="{Binding PickFilesDialog}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Viewbox Width="16" Height="16">
+                                    <Path Classes="icon" Data="{StaticResource IconPlus}" />
+                                </Viewbox>
+                                <TextBlock Text="Add files" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <Border Height="176" CornerRadius="14" ClipToBounds="True" BorderThickness="1"
+                            Background="{DynamicResource FieldBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}">
+                        <Grid>
+                            <ListBox Classes="list" SelectionMode="Single"
+                                     ItemsSource="{Binding FileListDialog, Mode=OneWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto, *" Margin="10,8">
+                                            <Viewbox Grid.Column="0" Width="18" Height="18" Margin="0,0,12,0">
+                                                <Path Classes="icon send" Data="{StaticResource IconFile}" />
+                                            </Viewbox>
+                                            <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" FontSize="14"
+                                                       Foreground="{DynamicResource TextBrush}"
+                                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8"
+                                        IsHitTestVisible="False"
+                                        IsVisible="{Binding !FileListDialog.Count}">
+                                <Viewbox Width="30" Height="30">
+                                    <Path Classes="icon faint" Data="{StaticResource IconFile}" />
+                                </Viewbox>
+                                <TextBlock Classes="faint" Text="No files selected yet" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- Transfer progress (bound to Progress, assumed 0-100) -->
+                <StackPanel Spacing="8" IsVisible="{Binding !!Progress}">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0" Classes="label" Text="Progress" Margin="2,0,0,0" />
+                        <TextBlock Grid.Column="1" Classes="label" Margin="0"
+                                   Text="{Binding Progress, StringFormat='{}{0}%'}" />
+                    </Grid>
+                    <ProgressBar Classes="xfer send" Minimum="0" Maximum="100" Value="{Binding Progress}" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Footer -->
+            <Grid Grid.Row="2" ColumnDefinitions="*, Auto, Auto" Margin="24,12,24,24">
+                <TextBlock Grid.Column="0" Classes="faint" VerticalAlignment="Center"
+                           Text="{Binding FileListDialog.Count, StringFormat='{}{0} selected'}" />
+                <Button Grid.Column="1" Classes="btn ghost" Width="NaN" Padding="18,0" Margin="0,0,8,0"
+                        Command="{Binding CloseSendRecvDialogCommand}">
+                    <TextBlock Text="Cancel" FontSize="14" FontWeight="SemiBold" />
+                </Button>
+                <Button Grid.Column="2" Classes="btn primary"
+                        Command="{Binding StartSendingCommand}" CommandParameter="{Binding $self}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Viewbox Width="18" Height="18">
+                            <Path Classes="icon" Data="{StaticResource IconSend}" Stroke="White" />
+                        </Viewbox>
+                        <TextBlock Text="Send" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </UserControl>
