@@ -1,19 +1,23 @@
 using System.Net.Sockets;
+using System.Text;
 
 using EasyTransfer.Core.Models.Filesystem;
 using EasyTransfer.Core.Models.Transfer;
+using EasyTransfer.Core.Models;
 using EasyTransfer.Core.Helpers;
 using EasyTransfer.Core.Logging;
-using System.Text;
 
 namespace EasyTransfer.Core.Services;
 
-internal sealed class ClientNetworkService : TransferModelBase
+internal sealed class ClientNetworkService
 { 
+    private DataContext Context { get; init; }
     private TransmissionService Transmission { get; init; }
 
-    public ClientNetworkService()
-    {   
+    public ClientNetworkService(DataContext context)
+    {
+        Context = context;
+
         Transmission = new TransmissionService();
     }
 
@@ -23,7 +27,7 @@ internal sealed class ClientNetworkService : TransferModelBase
         
         try
         {
-            client = new TcpClient(Address, Port);
+            client = new TcpClient(Context.Address, Context.Port);
         }
         catch
         {
@@ -77,17 +81,17 @@ internal sealed class ClientNetworkService : TransferModelBase
         foreach(SimpleFileData data in transferData.FileList)
         {
             FileData fileData = new(
-                data.Name, Path.Combine(DestDirectory.FullPath, data.Name),
-                DestDirectory.FullPath, data.Size
+                data.Name, Path.Combine(Context.DestDirectory.FullPath, data.Name),
+                Context.DestDirectory.FullPath, data.Size
             );
 
             if(!Transmission.ReceiveFile(client.GetStream(), fileData, out long recvBytes))
             {
-                Log.Error($"Received \"{fileData.Name}\" ({StringHelper.BytesFormatIn(recvBytes, "KB")}): FAILED");
+                Log.Error($"Received \"{fileData.Name}\" ({StringHelper.BytesFormatIn(recvBytes, "KB")}): FAILED, FILE DELETED");
                 return false;
             }
             
-            FileList.Add(fileData);
+            Context.FileList.Add(fileData);
             Log.Succ($"Received \"{fileData.Name}\" ({StringHelper.BytesFormatIn(recvBytes, "KB")}): SUCCESSFULLY");
         }
 

@@ -3,17 +3,21 @@ using System.Net.Sockets;
 
 using EasyTransfer.Core.Models.Transfer;
 using EasyTransfer.Core.Models.Filesystem;
+using EasyTransfer.Core.Models;
 using EasyTransfer.Core.Helpers;
 using EasyTransfer.Core.Logging;
 
 namespace EasyTransfer.Core.Services;
 
-internal sealed class ServerNetworkService : TransferModelBase
+internal sealed class ServerNetworkService
 {
+    private DataContext Context { get; init; }
     private TransmissionService Transmission { get; init; }
 
-    public ServerNetworkService()
-    {   
+    public ServerNetworkService(DataContext context)
+    {
+        Context = context;
+
         Transmission = new TransmissionService();
     }
 
@@ -21,7 +25,7 @@ internal sealed class ServerNetworkService : TransferModelBase
     {
         server = default;
         
-        if(!NetworkHelper.ParseIP(Address, out IPAddress? ip))
+        if(!NetworkHelper.ParseIP(Context.Address, out IPAddress? ip))
         {
             Log.Error($"The specified IP address is invalid");
             return false;
@@ -29,7 +33,7 @@ internal sealed class ServerNetworkService : TransferModelBase
 
         try
         {
-            server = new TcpListener(ip, Port);
+            server = new TcpListener(ip, Context.Port);
             server.Start();
         }
         catch
@@ -44,7 +48,7 @@ internal sealed class ServerNetworkService : TransferModelBase
     {
         client = default;
 
-        Log.Info($"{Address}:{Port} listening ... ", '\0');
+        Log.Info($"{Context.Address}:{Context.Port} listening ... ", '\0');
         
         try
         {
@@ -63,7 +67,7 @@ internal sealed class ServerNetworkService : TransferModelBase
     public bool SendInitialInfo(TcpClient client)
     {
         NetworkStream stream = client.GetStream();
-        TransferData? transferData = new(FileList.ToArray());
+        TransferData? transferData = new(Context.FileList.ToArray());
 
         if(!SerializerHelper.Serialize(transferData, out byte[]? bytes))
         {
@@ -100,7 +104,7 @@ internal sealed class ServerNetworkService : TransferModelBase
 
     public bool SendFileList(TcpClient client)
     {
-        foreach(FileData x in FileList)
+        foreach(FileData x in Context.FileList)
             if(!Transmission.SendFile(client.GetStream(), x))
             {
                 Log.Error($"Send \"{x.Name}\" ({StringHelper.BytesFormatIn(x.Size, "KB")}): FAILED");

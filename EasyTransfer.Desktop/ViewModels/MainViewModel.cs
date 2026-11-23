@@ -1,14 +1,11 @@
 using CommunityToolkit.Mvvm.Input;
-using Avalonia;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Threading.Tasks;
-using System;
 
 using EasyTransfer.Core.Models.Filesystem;
-using EasyTransfer.Core.Models.Transfer;
+using EasyTransfer.Core.Models;
 using EasyTransfer.Core.Services;
 using EasyTransfer.Core.Logging;
 
@@ -16,9 +13,11 @@ namespace EasyTransfer.Desktop.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    private readonly DataContext _context;
+
+    private string _command = string.Empty;
     private string _address = string.Empty;
     private int _port = 0;
-    private int _dialog = 0;
     private int _progress = 0;
     private DirectoryData? _destDirectory = default;
 
@@ -27,7 +26,16 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(IStorageProvider storageProvider)
     {
-        Manager = new TransferManagerService();
+        _context = new DataContext(
+            (() => Command, x => Command = x),
+            (() => Address, x => Address = x),
+            (() => Port, x => Port = x),
+            (() => FileListDialog, x => FileListDialog = x),
+            (() => DestDirectory, x => DestDirectory = x),
+            (() => Progress, x => Progress = x)
+        );
+
+        Manager = new TransferManagerService(_context);
         FilePicker = new FilePickerService(storageProvider);
 
         FileListDialog = new ObservableCollection<FileData>();
@@ -48,12 +56,24 @@ public partial class MainViewModel : ObservableObject
         }
     }
     
-    public bool IsSendRecvDialogOpen => Dialog != 0;
-    public bool IsSendDialog => Dialog == 1;
-    public bool IsRecvDialog => Dialog == 2; 
+    public bool IsSendRecvDialogOpen => Command != string.Empty;
+    public bool IsSendDialog => Command == "Send";
+    public bool IsRecvDialog => Command == "Recv"; 
 
     public bool CanStartSend() => FileListDialog.Count > 0;
     public bool CanStartRecv() => DestDirectory != default;
+
+    public string Command
+    {
+        get => _command;
+        set
+        {
+            SetProperty(ref _command, value);
+            RaiseProperty(nameof(IsSendRecvDialogOpen));
+            RaiseProperty(nameof(IsSendDialog));
+            RaiseProperty(nameof(IsRecvDialog));
+        }
+    }
 
     public string Address
     {
@@ -67,19 +87,7 @@ public partial class MainViewModel : ObservableObject
         set => SetProperty(ref _port, value);
     }
 
-    public int Dialog
-    { 
-        get => _dialog;
-        set
-        {
-            SetProperty(ref _dialog, value);
-            RaiseProperty(nameof(IsSendRecvDialogOpen));
-            RaiseProperty(nameof(IsSendDialog));
-            RaiseProperty(nameof(IsRecvDialog));
-        }
-    }
-
-    public int ProgressDialog
+    public int Progress
     {
         get => _progress;
         set
@@ -91,45 +99,33 @@ public partial class MainViewModel : ObservableObject
     // -------------------------------------------- Relay commands
 
     [RelayCommand]
-    public void ShowSendDialog() => Dialog = 1;
+    public void ShowSendDialog() => Command = "Send";
 
     [RelayCommand]
-    public void ShowRecvDialog() => Dialog = 2;
+    public void ShowRecvDialog() => Command = "Recv";
 
     [RelayCommand]
     public void CloseSendRecvDialog()
     {
         FileListDialog.Clear();
         DestDirectory = default;
+        Command = string.Empty;
         Address = string.Empty;
         Port = 0;
-        Dialog = 0;
     }
 
     [RelayCommand(CanExecute = nameof(CanStartSend))]
     public async Task StartSending(object? e)
     {
         if(e is Button button)
-            Manager.Send(new TransferContext(
-                (() => Address, x => Address = x),
-                (() => Port, x => Port = x),
-                (() => FileListDialog, x => FileListDialog = x),
-                (() => DestDirectory, x => DestDirectory = x),
-                (() => ProgressDialog, x => ProgressDialog = x)
-            ));
+            Manager.Send();
     }
 
     [RelayCommand(CanExecute = nameof(CanStartRecv))]
     public async Task StartReceiving(object? e)
     {
         if(e is Button button)
-            Manager.Recv(new TransferContext(
-                (() => Address, x => Address = x),
-                (() => Port, x => Port = x),
-                (() => FileListDialog, x => FileListDialog = x),
-                (() => DestDirectory, x => DestDirectory = x),
-                (() => ProgressDialog, x => ProgressDialog = x)
-            ));
+            Manager.Recv();
     }
 
     // -------------------------------------------- Picking files relay commands

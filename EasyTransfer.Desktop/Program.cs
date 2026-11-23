@@ -10,7 +10,7 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Log.Info("GUI session running");
+        Log.Info("GUI session is running ...");
         
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

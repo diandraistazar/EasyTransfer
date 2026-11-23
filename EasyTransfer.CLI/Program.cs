@@ -1,37 +1,29 @@
+using EasyTransfer.Core.Logging;
+
 namespace EasyTransfer.CLI;
 
-using EasyTransfer.API;
-using EasyTransfer.Types;
-using EasyTransfer.Logging;
-
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Collections.Generic;
-using System.CommandLine;
-
-static class Program
+internal static class Program
 {
-    public static string? command;
-    public static IPAddress? ipAddress;
-    public static int port;
-    public static List<FileInfo> fileList = new();
-    public static DirectoryInfo? dirPath;
-
-    public static void Main(string[] argv)
+	public static void Main(string[] argv)
     {
-        Argument.Parse(argv);
+        CLIMain cli = new(argv);
 
-        Log.Info("CLI session running");
+        cli.Run();
+    }
 
-        if (command == "send")
-        {
-            SendCommand();
-        }
-        else if (command == "recv")
-        {
-            RecvCommand();
-        }
+    public static void PrintHelp()
+    {
+        Log.Print("Description:");
+        Log.Print("  EasyTransfer.CLI");
+        Log.Print("\nUsage:");
+        Log.Print("  EasyTransfer.CLI <command> <address> <arguments>");
+        Log.Print("\nCommand:");
+        Log.Print("  send          Sending list of files");
+        Log.Print("  recv          Receiving list of files");
+        Log.Print("\nAddress:");
+        Log.Print("  address:port  Specify the server's IP");
+        Log.Print("\nArguments:");
+        Log.Print("  files ...     For Sending command only, e.g Downloads/1.png, Downloads/2.png");
+        Log.Print("  directory     For Receiving command only, e.g /tmp");
     }
 }
